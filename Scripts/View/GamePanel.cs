@@ -38,9 +38,9 @@ public class GamePanel : MonoBehaviour
         {4, 150}, {5, 115}, {6, 90}
     };
 
-
     public MyGrid[][] grids = null; // save all the generated grids
 
+    public int currentScore = 0;
     #endregion
 
     #region Game Logic
@@ -286,6 +286,8 @@ public class GamePanel : MonoBehaviour
 
     #region LifeCycle
     private void Awake() {
+        // initiate UI
+        InitPanelInfo();
         // initate grid
         InitGrid();
         // create number
@@ -329,6 +331,37 @@ public class GamePanel : MonoBehaviour
 
     #endregion
 
+    #region Update UI
+    
+    public void InitPanelInfo(){
+        this.text_best_score.text = PlayerPrefs.GetInt(Const.BestScore, 0).ToString();
+    }
+
+    public void AddScore(int score){
+        currentScore += score;
+        UpdateScore(currentScore);
+
+        // check if it is best score
+        if (currentScore > PlayerPrefs.GetInt(Const.BestScore, 0)){
+            PlayerPrefs.SetInt(Const.BestScore, currentScore);
+            UpdateBestScore(currentScore);
+        }
+    }
+
+    public void UpdateScore(int score){
+        this.text_score.text = score.ToString();
+    }
+
+    public void ResetScore(){
+        currentScore = 0;
+        UpdateScore(currentScore);
+    }
+
+    public void UpdateBestScore(int bestScore){
+        this.text_best_score.text = bestScore.ToString();        
+    }
+    #endregion
+
     #region GameLifeCycle
 
     public void OnLastMoveClick(){
@@ -339,7 +372,8 @@ public class GamePanel : MonoBehaviour
     }
     public void RestartGame(){
         // clear datar
-            // clear points TODO
+        // clear score
+        ResetScore();
 
         // clear number
         for (int i = 0; i < row; i ++){
