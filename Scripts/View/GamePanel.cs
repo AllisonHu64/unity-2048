@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GamePanel : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class GamePanel : MonoBehaviour
     public MyGrid[][] grids = null; // save all the generated grids
 
     public int currentScore = 0;
+
+    public StepModel lastStepModel;
     #endregion
 
     #region Game Logic
@@ -98,6 +101,11 @@ public class GamePanel : MonoBehaviour
         gameObject.GetComponent<Number>().Init(canCreateNumberGrid[index]);
     }
     
+    public void CreateNumber(MyGrid myGrid, int number){
+        GameObject gameObject = GameObject.Instantiate(numberPrefab,myGrid.transform);
+        gameObject.GetComponent<Number>().Init(myGrid);
+        myGrid.GetNumber().SetNumber(number);
+    }
     public MoveType calculateMoveTpye(){
         if(Mathf.Abs(pointerUpPos.x - pointerDownPos.x) > Mathf.Abs(pointerUpPos.y - pointerDownPos.y))
         {
@@ -311,6 +319,10 @@ public class GamePanel : MonoBehaviour
             Debug.Log("Don't recognize as move.");
             return;
         }
+
+        lastStepModel.UpdateData(this.currentScore, PlayerPrefs.GetInt(Const.BestScore, 0), grids);
+        this.btn_last.interactable = true;
+
         MoveType moveType = calculateMoveTpye();
         Debug.Log("movetype: " + moveType);
         MoveNumber(moveType);
@@ -329,12 +341,28 @@ public class GamePanel : MonoBehaviour
         }
     }
 
+
+    public void OnLastMoveClick(){
+        BackToLastStep();
+        btn_last.interactable = false;
+    }
+
+    public void OnRestartClick(){
+        RestartGame();
+    }
+
+    public void OnExitGameClick(){
+        ExitGame();
+    }
+
     #endregion
 
     #region Update UI
     
     public void InitPanelInfo(){
         this.text_best_score.text = PlayerPrefs.GetInt(Const.BestScore, 0).ToString();
+        this.lastStepModel = new StepModel();
+        this.btn_last.interactable = false;
     }
 
     public void AddScore(int score){
@@ -364,14 +392,38 @@ public class GamePanel : MonoBehaviour
 
     #region GameLifeCycle
 
-    public void OnLastMoveClick(){
+    public void BackToLastStep(){
+        // reset score back
+        currentScore = lastStepModel.score;
+        UpdateScore(lastStepModel.score);
+        // reset best score back
+        PlayerPrefs.SetInt(Const.BestScore, lastStepModel.bestScore);
+        UpdateBestScore(lastStepModel.bestScore);
+        // reset grid
+        for (int i = 0; i < row; i++){
+            for (int j = 0; j < col; j++){
+                if (lastStepModel.numbers[i][j] == 0 && grids[i][j].IsHaveNumber()){
+                    GameObject.Destroy(grids[i][j].GetNumber().gameObject);
+                    grids[i][j].SetNumber(null);
+                }
+                else if (lastStepModel.numbers[i][j] != 0 && !grids[i][j].IsHaveNumber()){
+                    // create number
+                    CreateNumber(grids[i][j],lastStepModel.numbers[i][j]);
+                }
+                else if (lastStepModel.numbers[i][j] != 0 && grids[i][j].IsHaveNumber()){
+                    // change number
+                    grids[i][j].GetNumber().SetNumber(lastStepModel.numbers[i][j]);
+                }
+            }
+        }
     }
 
     public void ExitGame() {
-
+        SceneManager.LoadSceneAsync(0);
     }
     public void RestartGame(){
         // clear datar
+        this.btn_last.interactable = false;
         // clear score
         ResetScore();
 
