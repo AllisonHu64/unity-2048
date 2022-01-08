@@ -12,6 +12,8 @@ public class Number : MonoBehaviour
 
     private MyGrid parentGrid;
 
+    public NumberStatus status;
+
     private float spawnScaleTime = 1;
     private bool isPlayingSpawnAnim = false;
     private float mergeScaleTime = 1;
@@ -23,6 +25,8 @@ public class Number : MonoBehaviour
     private bool isMoving = false;
     private Vector3 startMovePos, endMovePos;
 
+    public Color[] bg_colors; 
+    public List<int> number_index;
     private void Awake() {
         bg = transform.GetComponent<Image>();
         number_text = transform.Find("value").GetComponent<Text>();
@@ -33,6 +37,7 @@ public class Number : MonoBehaviour
         myGrid.SetNumber(this);
         this.SetGrid(myGrid);
         this.SetNumber(2);
+        this.status = NumberStatus.Normal;
         // play spawn anim
         PlaySpwanAnim();
     }
@@ -46,6 +51,7 @@ public class Number : MonoBehaviour
     }
     public void SetNumber(int number){
         number_text.text = number.ToString();
+        this.bg.color = this.bg_colors[number_index.IndexOf(number)];
     }
 
     public int GetNumber(){
@@ -68,8 +74,16 @@ public class Number : MonoBehaviour
     public void Merge(){
         SetNumber(GetNumber()*2);
         PlayMergeAnim();
+        this.status = NumberStatus.NotMerge;
     }
     
+    // check if can merge
+    public bool IsMerge(Number number){
+        if (this.GetNumber() == number.GetNumber() && number.status == NumberStatus.Normal){
+            return true;
+        }
+        return false;
+    }
     // play spawn 
     public void PlaySpwanAnim(){
         // triggers Update

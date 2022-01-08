@@ -25,6 +25,7 @@ public class GamePanel : MonoBehaviour
 
     private Vector3 pointerDownPos, pointerUpPos;
 
+    private bool isNeedCreateNumber = false;
     public List<MyGrid> canCreateNumberGrid = new List<MyGrid>();
     public Dictionary<int,int> grid_config = new Dictionary<int, int>() {
         {4, 150}, {5, 115}, {6, 90}
@@ -126,7 +127,13 @@ public class GamePanel : MonoBehaviour
         Debug.Log("movetype: " + moveType);
         MoveNumber(moveType);
 
-        CreateNumber();
+        if (isNeedCreateNumber){
+            CreateNumber();
+        }
+
+        // change the number status to normal
+        ResetNumberStatus();
+        isNeedCreateNumber = false;
     }
 
 
@@ -241,18 +248,31 @@ public class GamePanel : MonoBehaviour
     }
 
     public void HandleNumber(Number current, Number target, MyGrid targetGrid){
+
         if (target != null){
             // check if can merge
-            if (current.GetNumber() == target.GetNumber()){
+            if (current.IsMerge(target)){
                 target.Merge();
                 // clear current number;
                 current.GetGrid().SetNumber(null);
                 GameObject.Destroy(current.gameObject);
+                isNeedCreateNumber = true;
             }
         }else{
             // move to grid
             current.MoveToGrid(targetGrid);
+            isNeedCreateNumber = true;
         }
     }
 
+    public void ResetNumberStatus() {
+        for (int i = 0; i < row; i++){
+            for(int j = 0; j < col; j++){
+                // check if the grid is empty or not
+                if(grids[i][j].IsHaveNumber()){
+                    grids[i][j].GetNumber().status = NumberStatus.Normal;
+                }
+            }
+        }
+    }
 }
