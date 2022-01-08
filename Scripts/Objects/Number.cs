@@ -72,7 +72,12 @@ public class Number : MonoBehaviour
     }
 
     public void Merge(){
-        SetNumber(GetNumber()*2);
+        int number = this.GetNumber() * 2;
+        SetNumber(number);
+        if (number == 2048){
+            // game is won
+            GameObject.Find("Canvas/GamePanel").GetComponent<GamePanel>().GameWin();
+        }
         PlayMergeAnim();
         this.status = NumberStatus.NotMerge;
     }

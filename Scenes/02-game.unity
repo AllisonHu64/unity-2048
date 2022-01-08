@@ -134,6 +134,8 @@ GameObject:
   - component: {fileID: 96499678}
   - component: {fileID: 96499680}
   - component: {fileID: 96499679}
+  - component: {fileID: 96499681}
+  - component: {fileID: 96499682}
   m_Layer: 5
   m_Name: WinPanel
   m_TagString: Untagged
@@ -201,6 +203,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96499677}
   m_CullTransparentMesh: 1
+--- !u!114 &96499681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96499677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ec52d008c5f4c089925dc31ed1ca65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!223 &96499682
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96499677}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 2
+  m_TargetDisplay: 0
 --- !u!1 &122311560
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,7 +730,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 562966319}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 598413914}
+        m_TargetAssemblyTypeName: LosePanel, Assembly-CSharp
+        m_MethodName: OnNewGameButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &562966319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -826,6 +873,8 @@ GameObject:
   - component: {fileID: 598413911}
   - component: {fileID: 598413913}
   - component: {fileID: 598413912}
+  - component: {fileID: 598413914}
+  - component: {fileID: 598413915}
   m_Layer: 5
   m_Name: LosePanel
   m_TagString: Untagged
@@ -893,6 +942,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 598413910}
   m_CullTransparentMesh: 1
+--- !u!114 &598413914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598413910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d6f6518172543df8f8706f0d15c41f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!223 &598413915
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598413910}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 2
+  m_TargetDisplay: 0
 --- !u!1 &606069052
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,7 +1057,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 606069055}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 96499681}
+        m_TargetAssemblyTypeName: WinPanel, Assembly-CSharp
+        m_MethodName: onBackButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &606069055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1208,6 +1302,8 @@ MonoBehaviour:
   btn_restart: {fileID: 0}
   btn_last: {fileID: 0}
   btn_exit: {fileID: 0}
+  winPanel: {fileID: 96499681}
+  losePanel: {fileID: 598413914}
   girdParent: {fileID: 122311561}
   gridPrefab: {fileID: 1520246855653986744, guid: 936397f1b11ca456a96da6e901f27ba9, type: 3}
   numberPrefab: {fileID: 7525302765994308791, guid: 76f3d0160a1fe4491b0bdf23c46e727d, type: 3}
@@ -2418,7 +2514,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1597641961}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 96499681}
+        m_TargetAssemblyTypeName: WinPanel, Assembly-CSharp
+        m_MethodName: OnNewGameButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1597641961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2539,7 +2647,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1754889585}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 598413914}
+        m_TargetAssemblyTypeName: LosePanel, Assembly-CSharp
+        m_MethodName: onBackButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1754889585
 MonoBehaviour:
   m_ObjectHideFlags: 0

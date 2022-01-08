@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GamePanel : MonoBehaviour
 {
+    #region UI controller
     public Text text_score; // current score
     public Text text_best_score; // best score
 
@@ -14,6 +15,11 @@ public class GamePanel : MonoBehaviour
 
     public Button btn_exit;
 
+    public WinPanel winPanel;
+    public LosePanel losePanel;
+    #endregion
+
+    #region Property Variable
     public Transform girdParent; // parent of grid
 
     private int row; // number of rows
@@ -26,6 +32,7 @@ public class GamePanel : MonoBehaviour
     private Vector3 pointerDownPos, pointerUpPos;
 
     private bool isNeedCreateNumber = false;
+
     public List<MyGrid> canCreateNumberGrid = new List<MyGrid>();
     public Dictionary<int,int> grid_config = new Dictionary<int, int>() {
         {4, 150}, {5, 115}, {6, 90}
@@ -33,21 +40,10 @@ public class GamePanel : MonoBehaviour
 
 
     public MyGrid[][] grids = null; // save all the generated grids
-    // last move
 
-    public void OnLastMoveClick(){
-    }
+    #endregion
 
-    // restart
-    public void OnRestartClick(){
-
-    }
-
-    // exit
-    public void OnExitClick(){
-
-    }
-
+    #region Game Logic
     // initialize number of grids
     public void InitGrid(){
         // get the value
@@ -101,42 +97,7 @@ public class GamePanel : MonoBehaviour
         GameObject gameObject = GameObject.Instantiate(numberPrefab,canCreateNumberGrid[index].transform);
         gameObject.GetComponent<Number>().Init(canCreateNumberGrid[index]);
     }
-
-    private void Awake() {
-        // initate grid
-        InitGrid();
-        // create number
-        CreateNumber();
-
-    }
-
-    public void OnPointerDown(){
-        // Debug.Log("pointer down get mouse pos" + Input.mousePosition);
-        pointerDownPos = Input.mousePosition;
-    }
-
-    public void OnPointerUp(){
-        // Debug.Log("pointer up get mouse pos" + Input.mousePosition);
-        pointerUpPos = Input.mousePosition;
-        
-        if (Vector3.Distance(pointerDownPos,pointerUpPos) < 100){
-            Debug.Log("Don't recognize as move.");
-            return;
-        }
-        MoveType moveType = calculateMoveTpye();
-        Debug.Log("movetype: " + moveType);
-        MoveNumber(moveType);
-
-        if (isNeedCreateNumber){
-            CreateNumber();
-        }
-
-        // change the number status to normal
-        ResetNumberStatus();
-        isNeedCreateNumber = false;
-    }
-
-
+    
     public MoveType calculateMoveTpye(){
         if(Mathf.Abs(pointerUpPos.x - pointerDownPos.x) > Mathf.Abs(pointerUpPos.y - pointerDownPos.y))
         {
@@ -177,11 +138,12 @@ public class GamePanel : MonoBehaviour
                             Number currentNumber = grids[i][j].GetNumber();
                             for(int m = i-1; m >= 0; m--){
                                 
-                                Number targetNumber  = null;
                                 if (grids[m][j].IsHaveNumber()){
-                                        targetNumber = grids[m][j].GetNumber();
+                                    Number targetNumber = grids[m][j].GetNumber();
+                                    HandleNumber(currentNumber,targetNumber, grids[m][j]);
+                                    break;
                                 }
-                                HandleNumber(currentNumber,targetNumber,grids[m][j]);
+                                HandleNumber(currentNumber,null,grids[m][j]);
 
                             }
                         }
@@ -194,11 +156,13 @@ public class GamePanel : MonoBehaviour
                         if (grids[i][j].IsHaveNumber()){
                             Number currentNumber = grids[i][j].GetNumber();
                             for(int m = i+1; m < row; m++){
-                                Number targetNumber  = null;
+                    
                                 if (grids[m][j].IsHaveNumber()){
-                                    targetNumber = grids[m][j].GetNumber();
+                                    Number targetNumber = grids[m][j].GetNumber();
+                                    HandleNumber(currentNumber,targetNumber, grids[m][j]);
+                                    break;
                                 }
-                                HandleNumber(currentNumber,targetNumber,grids[m][j]);
+                                HandleNumber(currentNumber,null,grids[m][j]);
 
                             }
                         }
@@ -211,12 +175,13 @@ public class GamePanel : MonoBehaviour
                         if (grids[i][j].IsHaveNumber()){
                             Number currentNumber = grids[i][j].GetNumber();
                             for(int m = j+1; m < col; m++){
-                                
-                                Number targetNumber  = null;
+
                                 if (grids[i][m].IsHaveNumber()){
-                                        targetNumber = grids[i][m].GetNumber();
+                                    Number targetNumber = grids[i][m].GetNumber();
+                                    HandleNumber(currentNumber,targetNumber, grids[i][m]);
+                                    break;
                                 }
-                                HandleNumber(currentNumber,targetNumber,grids[i][m]);
+                                HandleNumber(currentNumber,null,grids[i][m]);
 
                             }
                         }
@@ -230,11 +195,12 @@ public class GamePanel : MonoBehaviour
                             Number currentNumber = grids[i][j].GetNumber();
                             for(int m = j-1; m >= 0; m--){
                                 
-                                Number targetNumber  = null;
                                 if (grids[i][m].IsHaveNumber()){
-                                        targetNumber = grids[i][m].GetNumber();
+                                    Number targetNumber = grids[i][m].GetNumber();
+                                    HandleNumber(currentNumber,targetNumber, grids[i][m]);
+                                    break;
                                 }
-                                HandleNumber(currentNumber,targetNumber,grids[i][m]);
+                                HandleNumber(currentNumber,null,grids[i][m]);
 
                             }
                         }
@@ -275,4 +241,128 @@ public class GamePanel : MonoBehaviour
             }
         }
     }
+
+    // check if game is lost
+    public bool IsGameLose() {
+        // check if the grid is full
+        for (int i = 0; i < row; i++){
+            for(int j = 0; j < col; j++) {
+                if (!grids[i][j].IsHaveNumber()){
+                    return false;
+                }
+            }
+        }
+
+        // check if merge is possible
+        for (int i = 0; i < row; i ++) {
+            for (int j = 0; j < col; j++) {
+
+                MyGrid up = IsHaveGrid(i-1,j)? grids[i - 1][j] : null;
+                MyGrid right = IsHaveGrid(i,j+1)? grids[i][j + 1] : null;
+
+                if (up != null){
+                    if (grids[i][j].GetNumber().IsMerge(up.GetNumber())){
+                        return false;
+                    }
+                }
+
+                if (right != null){
+                    if (grids[i][j].GetNumber().IsMerge(right.GetNumber())){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public bool IsHaveGrid(int i, int j){
+        if (i >= 0 && i < row && j >= 0 && j < col){
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
+    #region LifeCycle
+    private void Awake() {
+        // initate grid
+        InitGrid();
+        // create number
+        CreateNumber();
+
+    }
+
+    #endregion
+
+    #region User Event
+    public void OnPointerDown(){
+        // Debug.Log("pointer down get mouse pos" + Input.mousePosition);
+        pointerDownPos = Input.mousePosition;
+    }
+
+    public void OnPointerUp(){
+        // Debug.Log("pointer up get mouse pos" + Input.mousePosition);
+        pointerUpPos = Input.mousePosition;
+        
+        if (Vector3.Distance(pointerDownPos,pointerUpPos) < 100){
+            Debug.Log("Don't recognize as move.");
+            return;
+        }
+        MoveType moveType = calculateMoveTpye();
+        Debug.Log("movetype: " + moveType);
+        MoveNumber(moveType);
+
+        if (isNeedCreateNumber){
+            CreateNumber();
+        }
+
+        // change the number status to normal
+        ResetNumberStatus();
+        isNeedCreateNumber = false;
+
+        // check if game is lost
+        if (IsGameLose()) { // meaning game is lost
+            GameLose();
+        }
+    }
+
+    #endregion
+
+    #region GameLifeCycle
+
+    public void OnLastMoveClick(){
+    }
+
+    public void ExitGame() {
+
+    }
+    public void RestartGame(){
+        // clear datar
+            // clear points TODO
+
+        // clear number
+        for (int i = 0; i < row; i ++){
+            for (int j = 0; j < col; j++) {
+                if (grids[i][j].IsHaveNumber()){
+                    GameObject.Destroy(grids[i][j].GetNumber().gameObject);
+                    grids[i][j].SetNumber(null);
+                }
+            }
+        }
+
+        // create a number
+        CreateNumber();
+    }
+
+    public void GameWin() {
+        Debug.Log("Game Win");
+        winPanel.Show();
+    }
+
+    public void GameLose() {
+        Debug.Log("Game Lose");
+        losePanel.Show();
+    }
+    #endregion 
 }
