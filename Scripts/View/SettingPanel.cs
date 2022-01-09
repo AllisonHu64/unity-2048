@@ -15,11 +15,13 @@ public class SettingPanel : View
 
     // move music scroll bar
     public void OnMusicVolumeChange(float volume){
+        AudioManager._instance.OnMusicVolumneChange(volume);
         PlayerPrefs.SetFloat(Const.Music, volume);
     }
 
     // move sound scroll bar
     public void OnSoundVolumeChange(float volume){
+        AudioManager._instance.OnEffectVolumeChange(volume);
         PlayerPrefs.SetFloat(Const.Sound, volume);
     }
 

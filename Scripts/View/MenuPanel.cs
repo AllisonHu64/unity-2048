@@ -7,6 +7,10 @@ public class MenuPanel : MonoBehaviour
     public SelectModelPanel selectModelPanel;
     public SettingPanel settingPanel;
 
+    public AudioClip bg_clip;
+    void Start(){
+        AudioManager._instance.PlayMusic(bg_clip);
+    }
     // click on start game
     public void OnStartGameClick(){
         // change scene

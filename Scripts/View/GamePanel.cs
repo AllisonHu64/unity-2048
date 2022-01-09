@@ -18,6 +18,8 @@ public class GamePanel : MonoBehaviour
 
     public WinPanel winPanel;
     public LosePanel losePanel;
+
+    public AudioClip bg_clip;
     #endregion
 
     #region Property Variable
@@ -303,6 +305,10 @@ public class GamePanel : MonoBehaviour
 
     }
 
+    private void Start(){
+        // play background music
+        AudioManager._instance.PlayMusic(bg_clip);
+    }
     #endregion
 
     #region User Event

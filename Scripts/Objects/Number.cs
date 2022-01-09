@@ -27,6 +27,8 @@ public class Number : MonoBehaviour
 
     public Color[] bg_colors; 
     public List<int> number_index;
+
+    public AudioClip merge_effect_clip;
     private void Awake() {
         bg = transform.GetComponent<Image>();
         number_text = transform.Find("value").GetComponent<Text>();
@@ -82,6 +84,9 @@ public class Number : MonoBehaviour
         }
         PlayMergeAnim();
         this.status = NumberStatus.NotMerge;
+
+        // play merge sound effect
+        AudioManager._instance.PlayMergeEffect(merge_effect_clip);
     }
     
     // check if can merge
